@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>ImmoSmart – Immobilien- & Vertragsmanagement</title>
+  <meta name="theme-color" content="#111827" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
+      --accent:#111827; --green:#15803d; --yellow:#b45309; --red:#b91c1c; --blue:#1d4ed8;
+      --radius:18px; --shadow:0 12px 30px rgba(17,24,39,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+    aside{background:#0f172a;color:white;padding:22px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:26px}
+    .logo{width:42px;height:42px;border-radius:12px;background:white;color:#0f172a;display:grid;place-items:center;font-weight:800}
+    .brand h1{font-size:20px;margin:0}.brand small{color:#cbd5e1}
+    nav{display:grid;gap:7px}
+    nav button{background:transparent;border:0;color:#cbd5e1;text-align:left;padding:12px 14px;border-radius:12px}
+    nav button.active,nav button:hover{background:#1e293b;color:white}
+    .side-note{position:absolute;left:18px;right:18px;bottom:20px;color:#94a3b8;font-size:12px}
+    main{padding:26px;min-width:0}
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:22px}
+    .title h2{margin:0;font-size:28px}.title p{margin:5px 0 0;color:var(--muted)}
+    .actions{display:flex;flex-wrap:wrap;gap:8px}
+    .btn{border:1px solid var(--line);background:white;color:var(--text);padding:10px 14px;border-radius:12px}
+    .btn.primary{background:#111827;color:white;border-color:#111827}
+    .btn.ghost{background:transparent}
+    .grid{display:grid;gap:16px}
+    .kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .kpi .label{color:var(--muted);font-size:13px}.kpi .value{font-size:28px;font-weight:800;margin-top:6px}.kpi .sub{font-size:12px;color:var(--muted);margin-top:5px}
+    .cols-2{grid-template-columns:1.2fr .8fr}.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .section-title h3{margin:0;font-size:17px}.section-title span{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse}
+    th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+    th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+    tr.clickable:hover{background:#f9fafb}
+    .status{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:12px;padding:6px 9px;border-radius:999px}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .green{background:#ecfdf5;color:var(--green)} .green .dot{background:var(--green)}
+    .yellow{background:#fffbeb;color:var(--yellow)} .yellow .dot{background:var(--yellow)}
+    .red{background:#fef2f2;color:var(--red)} .red .dot{background:var(--red)}
+    .blue{background:#eff6ff;color:var(--blue)} .blue .dot{background:var(--blue)}
+    .stack{display:grid;gap:10px}
+    .alert{border-left:4px solid var(--yellow);background:#fffbeb;padding:12px 14px;border-radius:10px}
+    .alert.redline{border-left-color:var(--red);background:#fef2f2}
+    .alert.greenline{border-left-color:var(--green);background:#ecfdf5}
+    .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:5px 8px;font-size:12px;margin:2px 4px 2px 0;background:white}
+    .muted{color:var(--muted)}
+    .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .field{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafafa}
+    .field b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+    .bar{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:#111827}
+    .tab{display:none}.tab.active{display:block}
+    .mobile-nav{display:none}
+    .decision{background:linear-gradient(135deg,#111827,#1f2937);color:white}
+    .decision .muted{color:#cbd5e1}.decision .field{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15)}
+    .recommendation{font-size:22px;font-weight:800;margin:6px 0}
+    .small{font-size:12px}
+    .search{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:white}
+    .hero{padding:22px;background:linear-gradient(135deg,#fff,#f3f4f6);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:16px}
+    .hero h3{font-size:22px;margin:0 0 6px}.hero p{margin:0;color:var(--muted)}
+    @media (max-width: 980px){
+      .app{grid-template-columns:1fr}
+      aside{display:none}
+      main{padding:18px 14px 92px}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .cols-2,.cols-3{grid-template-columns:1fr}
+      .detail-grid{grid-template-columns:1fr}
+      .mobile-nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:white;border-top:1px solid var(--line);z-index:10;justify-content:space-around;padding:8px 6px max(8px,env(safe-area-inset-bottom))}
+      .mobile-nav button{border:0;background:transparent;color:var(--muted);font-size:11px;padding:5px 6px}
+      .mobile-nav button.active{color:#111827;font-weight:800}
+      .topbar{align-items:flex-start}.title h2{font-size:24px}
+      .table-wrap{overflow:auto}
+      table{min-width:880px}
+    }
+    @media print{
+      aside,.mobile-nav,.actions,.btn{display:none!important}
+      .app{display:block}.tab{display:none!important}.tab.active{display:block!important}
+      main{padding:0}.card{box-shadow:none;break-inside:avoid}
+      body{background:white}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="logo">IS</div><div><h1>ImmoSmart</h1><small>Real Estate Intelligence</small></div></div>
+    <nav id="desktopNav">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="standorte">Standorte</button>
+      <button data-tab="vertraege">Verträge & Fristen</button>
+      <button data-tab="kosten">Kosten & Reparaturen</button>
+      <button data-tab="dokumente">Dokumente</button>
+      <button data-tab="decision">KI Decision Center</button>
+    </nav>
+    <div class="side-note">Prototype v0.1 · Demo-Daten<br>Keine Rechts- oder Zahlungsfreigabe.</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="title">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageSubtitle">Immobilien-, Vertrags- und Kostensteuerung auf einen Blick.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="exportCSV()">CSV exportieren</button>
+        <button class="btn" onclick="window.print()">PDF / Drucken</button>
+        <button class="btn primary" onclick="demoAnalyse()">KI-Prüfung starten</button>
+      </div>
+    </div>
+
+    <section class="tab active" id="dashboard">
+      <div class="hero">
+        <h3>Guten Abend, Julia.</h3>
+        <p>ImmoSmart zeigt Handlungsbedarf, Fristen, Kostenauffälligkeiten und wirtschaftliche Entscheidungen je Standort.</p>
+      </div>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Aktive Standorte</div><div class="value" id="kpiSites">4</div><div class="sub">Demo-Bestand</div></div>
+        <div class="card kpi"><div class="label">Handlungsbedarf</div><div class="value" id="kpiActions">3</div><div class="sub">Fristen / Kosten / Optionen</div></div>
+        <div class="card kpi"><div class="label">Verträge ≤ 12 Monate</div><div class="value" id="kpiExpiring">2</div><div class="sub">nächste 12 Monate</div></div>
+        <div class="card kpi"><div class="label">Indexprüfung offen</div><div class="value" id="kpiIndex">2</div><div class="sub">vertraglich zu prüfen</div></div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="section-title"><h3>Prioritäten</h3><span>automatisch bewertet</span></div>
+          <div id="priorityList" class="stack"></div>
+        </div>
+        <div class="card">
+          <div class="section-title"><h3>Kostenmonitor</h3><span>Monat vs. Vormonat</span></div>
+          <div class="stack">
+            <div><div style="display:flex;justify-content:space-between"><b>Reparaturen</b><span>+24%</span></div><div class="bar"><span style="width:78%"></span></div></div>
+            <div><div style="display:flex;justify-content:space-between"><b>Wartung</b><span>+8%</span></div><div class="bar"><span style="width:48%"></span></div></div>
+            <div><div style="display:flex;justify-content:space-between"><b>Nebenkosten</b><span>+11%</span></div><div class="bar"><span style="width:56%"></span></div></div>
+            <div><div style="display:flex;justify-content:space-between"><b>CapEx</b><span>+31%</span></div><div class="bar"><span style="width:86%"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" id="standorte">
+      <div class="card">
+        <div class="section-title"><h3>Standortliste</h3><span>CRM + Vertrag + Kosten</span></div>
+        <input class="search" id="siteSearch" placeholder="Standort, Stadt oder Nummer suchen …" oninput="renderSites()">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nr.</th><th>Standort</th><th>Bundesland</th><th>Mietende</th><th>Option</th><th>Index</th><th>Kosten-Trend</th><th>Status</th></tr></thead>
+            <tbody id="siteTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="siteDetail" style="margin-top:16px"></div>
+    </section>
+
+    <section class="tab" id="vertraege">
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="section-title"><h3>Fristen & Optionen</h3><span>nächste Aktionen</span></div>
+          <div id="contractActions" class="stack"></div>
+        </div>
+        <div class="card">
+          <div class="section-title"><h3>Indexmanagement</h3><span>keine automatische Rechtsentscheidung</span></div>
+          <div class="stack">
+            <div class="alert"><b>Osnabrück</b><br><span class="muted">Indexklausel vorhanden · Basis 2020 = 100 · Schwelle prüfen.</span></div>
+            <div class="alert greenline"><b>Würzburg</b><br><span class="muted">Letzte Indexprüfung dokumentiert · aktuell kein dringender Handlungsbedarf.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" id="kosten">
+      <div class="grid cols-3">
+        <div class="card"><div class="section-title"><h3>Reparaturen</h3></div><div class="value" style="font-size:26px;font-weight:800">€ 42.800</div><p class="muted">Demo YTD · +24% ggü. Vergleichszeitraum.</p></div>
+        <div class="card"><div class="section-title"><h3>Instandhaltung</h3></div><div class="value" style="font-size:26px;font-weight:800">€ 31.450</div><p class="muted">Demo YTD · +8%.</p></div>
+        <div class="card"><div class="section-title"><h3>CapEx</h3></div><div class="value" style="font-size:26px;font-weight:800">€ 87.200</div><p class="muted">Demo YTD · +31%.</p></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="section-title"><h3>Verantwortung Mieter / Vermieter</h3><span>aus Vertrag + Maßnahme ableiten</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Bauteil / Maßnahme</th><th>Typische Prüfung</th><th>Ergebnis im System</th></tr></thead>
+            <tbody>
+              <tr><td>Dach</td><td>Vertragsklausel + Ursache + Instandhaltung / Instandsetzung</td><td><span class="status yellow"><span class="dot"></span>Prüfen</span></td></tr>
+              <tr><td>Tore</td><td>Wartungspflicht, Verschleiß, Schadenverursachung</td><td><span class="status yellow"><span class="dot"></span>Prüfen</span></td></tr>
+              <tr><td>Elektro</td><td>DGUV / Betreiberpflicht / Vermieterverantwortung</td><td><span class="status blue"><span class="dot"></span>Klausel erforderlich</span></td></tr>
+              <tr><td>Kleinreparaturen</td><td>Höchstgrenzen und vertragliche Wirksamkeit</td><td><span class="status blue"><span class="dot"></span>Vertrag lesen</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" id="dokumente">
+      <div class="card">
+        <div class="section-title"><h3>Dokumentenakte</h3><span>später: Upload + OCR + KI-Extraktion</span></div>
+        <div class="grid cols-3">
+          <div class="field"><b>Mietverträge</b>Verträge, Nachträge, Optionen</div>
+          <div class="field"><b>Rechnungen</b>Reparatur, Wartung, Nebenkosten</div>
+          <div class="field"><b>Angebote</b>Handwerker / CapEx / Vergleich</div>
+          <div class="field"><b>Technik</b>TÜV, DGUV, Brandschutz</div>
+          <div class="field"><b>Korrespondenz</b>Vermieter / intern / Dienstleister</div>
+          <div class="field"><b>CRM</b>Umsatz, Ergebnis, Standortstrategie</div>
+        </div>
+        <div class="alert" style="margin-top:14px"><b>Datenschutz-Hinweis:</b> In dieser Demo werden keine echten Dokumente gespeichert oder an externe Dienste gesendet.</div>
+      </div>
+    </section>
+
+    <section class="tab" id="decision">
+      <div class="card decision">
+        <div class="section-title"><h3>KI Decision Center</h3><span style="color:#cbd5e1">Vertrag + CRM + Kosten</span></div>
+        <p class="muted">Die Demo kombiniert Fristen, Optionen, Index, Kostenentwicklung und wirtschaftliche CRM-Daten zu einer begründeten Handlungsempfehlung.</p>
+        <div class="recommendation" id="decisionHeadline">Osnabrück: VERLÄNGERUNG PRÜFEN</div>
+        <div class="detail-grid">
+          <div class="field"><b>Vertrag</b><span id="decisionContract">Option vorhanden; Frist im Blick behalten.</span></div>
+          <div class="field"><b>CRM</b><span id="decisionCRM">Standort strategisch relevant; Profitabilität positiv.</span></div>
+          <div class="field"><b>Kosten</b><span id="decisionCosts">Reparaturtrend erhöht; Ursachenanalyse empfohlen.</span></div>
+          <div class="field"><b>Empfehlung</b><span id="decisionRec">Option wirtschaftlich und vertraglich prüfen; parallel Kostenmaßnahmen bewerten.</span></div>
+        </div>
+        <p class="small muted" style="margin-top:14px">Prototype: keine automatische Rechtsentscheidung, keine Vertragsfreigabe, keine Zahlungsauslösung.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="mobile-nav" id="mobileNav">
+  <button data-tab="dashboard" class="active">Dashboard</button>
+  <button data-tab="standorte">Standorte</button>
+  <button data-tab="vertraege">Fristen</button>
+  <button data-tab="kosten">Kosten</button>
+  <button data-tab="decision">KI</button>
+</div>
+
+<script>
+const sites = [
+  {
+    nr:"AG0222", name:"Osnabrück", city:"Osnabrück", bundesland:"Niedersachsen",
+    address:"Demo-Adresse · Osnabrück", type:"PKW/LKW", costCenter:"Demo",
+    landlord:"Demo Vermieter GmbH", contact:"Max Mustermann",
+    start:"01.01.2023", end:"31.12.2027", notice:"12 Monate",
+    option:"5 Jahre bis 31.12.2032", optionDeadline:"31.12.2026",
+    rent:5200, nk:1100, index:"Ja", indexBase:"2020=100", indexLast:"07/2026",
+    indexNext:"01/2027", capex:18000, opex:29000, costTrend:24,
+    revenue:1850000, margin:13.5, strategic:"hoch", status:"yellow"
+  },
+  {
+    nr:"SC654", name:"Würzburg", city:"Würzburg", bundesland:"Bayern",
+    address:"Demo-Adresse · Würzburg", type:"PKW", costCenter:"Demo",
+    landlord:"Demo Immobilien KG", contact:"Erika Beispiel",
+    start:"01.07.2020", end:"30.06.2029", notice:"12 Monate",
+    option:"keine", optionDeadline:"–",
+    rent:4700, nk:980, index:"Ja", indexBase:"2015=100", indexLast:"08/2026",
+    indexNext:"08/2027", capex:9000, opex:21000, costTrend:8,
+    revenue:1620000, margin:11.2, strategic:"mittel", status:"green"
+  },
+  {
+    nr:"M492", name:"Mülheim", city:"Mülheim an der Ruhr", bundesland:"Nordrhein-Westfalen",
+    address:"Demo-Adresse · Mülheim", type:"PKW", costCenter:"Demo",
+    landlord:"Demo Bestand AG", contact:"Anna Beispiel",
+    start:"01.01.2019", end:"31.03.2027", notice:"9 Monate",
+    option:"1 x 3 Jahre", optionDeadline:"30.06.2026",
+    rent:6100, nk:1260, index:"Nein", indexBase:"–", indexLast:"–",
+    indexNext:"–", capex:25000, opex:33000, costTrend:31,
+    revenue:1710000, margin:7.1, strategic:"mittel", status:"red"
+  },
+  {
+    nr:"F182", name:"Neumünster", city:"Neumünster", bundesland:"Schleswig-Holstein",
+    address:"Demo-Adresse · Neumünster", type:"PKW", costCenter:"Demo",
+    landlord:"Demo Nord GmbH", contact:"Peter Beispiel",
+    start:"01.05.2022", end:"30.04.2030", notice:"12 Monate",
+    option:"keine", optionDeadline:"–",
+    rent:2169.05, nk:760, index:"Ja", indexBase:"2020=100", indexLast:"07/2023",
+    indexNext:"jetzt prüfen", capex:12000, opex:24000, costTrend:11,
+    revenue:1490000, margin:10.4, strategic:"hoch", status:"yellow"
+  }
+];
+
+const labels = {
+  dashboard:["Dashboard","Immobilien-, Vertrags- und Kostensteuerung auf einen Blick."],
+  standorte:["Standorte","CRM, Vertragsdaten, Index und Kosten je Standort."],
+  vertraege:["Verträge & Fristen","Optionen, Kündigungsfristen und Indexprüfungen."],
+  kosten:["Kosten & Reparaturen","Kostenentwicklung und Verantwortungsprüfung."],
+  dokumente:["Dokumente","Vertrags-, Rechnungs- und technische Dokumentenakte."],
+  decision:["KI Decision Center","Vertragliche und wirtschaftliche Entscheidungsvorbereitung."]
+};
+
+function setTab(id){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));
+  document.getElementById("pageTitle").textContent=labels[id][0];
+  document.getElementById("pageSubtitle").textContent=labels[id][1];
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+
+function statusBadge(s){
+  const text={green:"OK",yellow:"Handlungsbedarf",red:"Kritisch",blue:"Prüfen"}[s]||"Prüfen";
+  return `<span class="status ${s}"><span class="dot"></span>${text}</span>`;
+}
+function euro(n){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
+function renderSites(){
+  const q=(document.getElementById("siteSearch")?.value||"").toLowerCase();
+  const rows=sites.filter(s=>`${s.nr} ${s.name} ${s.city}`.toLowerCase().includes(q)).map((s,i)=>`
+    <tr class="clickable" onclick="showSite('${s.nr}')">
+      <td>${s.nr}</td><td><b>${s.name}</b><br><span class="muted">${s.city}</span></td><td>${s.bundesland}</td>
+      <td>${s.end}</td><td>${s.option}</td><td>${s.index}</td><td>${s.costTrend>0?"+":""}${s.costTrend}%</td><td>${statusBadge(s.status)}</td>
+    </tr>`).join("");
+  document.getElementById("siteTable").innerHTML=rows;
+}
+function showSite(nr){
+  const s=sites.find(x=>x.nr===nr); if(!s)return;
+  document.getElementById("siteDetail").innerHTML=`
+    <div class="section-title"><h3>${s.name} · ${s.nr}</h3>${statusBadge(s.status)}</div>
+    <div class="detail-grid">
+      <div class="field"><b>Adresse</b>${s.address}</div><div class="field"><b>Typ / Kostenstelle</b>${s.type} · ${s.costCenter}</div>
+      <div class="field"><b>Vermieter</b>${s.landlord}<br><span class="muted">${s.contact}</span></div><div class="field"><b>Mietzeit</b>${s.start} – ${s.end}</div>
+      <div class="field"><b>Kündigungsfrist</b>${s.notice}</div><div class="field"><b>Option</b>${s.option}<br><span class="muted">Frist: ${s.optionDeadline}</span></div>
+      <div class="field"><b>Miete / NK</b>${euro(s.rent)} / Monat · NK ${euro(s.nk)}</div><div class="field"><b>Index</b>${s.index} · ${s.indexBase}<br><span class="muted">Nächste Prüfung: ${s.indexNext}</span></div>
+      <div class="field"><b>CapEx / OpEx</b>${euro(s.capex)} / ${euro(s.opex)}</div><div class="field"><b>CRM</b>Umsatz ${euro(s.revenue)} · Marge ${s.margin}% · Relevanz ${s.strategic}</div>
+    </div>
+    <div style="margin-top:14px"><button class="btn primary" onclick="analyseSite('${s.nr}')">Im KI Decision Center analysieren</button></div>`;
+}
+function renderPriorities(){
+  const list=[
+    ["M492 Mülheim","Option / Frist bereits kritisch – Vertragsstatus sofort prüfen.","redline"],
+    ["AG0222 Osnabrück","Option + Kostenanstieg: Vertrags- und CRM-Bewertung zusammenführen.",""],
+    ["F182 Neumünster","Indexprüfung laut Demo-Daten offen.",""]
+  ];
+  document.getElementById("priorityList").innerHTML=list.map(x=>`<div class="alert ${x[2]}"><b>${x[0]}</b><br><span class="muted">${x[1]}</span></div>`).join("");
+}
+function renderContractActions(){
+  document.getElementById("contractActions").innerHTML=sites.map(s=>`
+    <div class="field"><b>${s.nr} · ${s.name}</b>
+    Mietende: ${s.end}<br>Option: ${s.option}<br><span class="muted">Kündigungsfrist: ${s.notice}</span></div>`).join("");
+}
+function analyseSite(nr){
+  const s=sites.find(x=>x.nr===nr); if(!s)return;
+  document.getElementById("decisionHeadline").textContent=`${s.name}: ${s.status==="red"?"SOFORT PRÜFEN":s.margin>=10?"VERLÄNGERUNG PRÜFEN":"NEU VERHANDELN / PRÜFEN"}`;
+  document.getElementById("decisionContract").textContent=`Mietende ${s.end}; Kündigungsfrist ${s.notice}; Option: ${s.option}; Optionsfrist: ${s.optionDeadline}.`;
+  document.getElementById("decisionCRM").textContent=`Umsatz ${euro(s.revenue)}, Marge ${s.margin}%, strategische Relevanz ${s.strategic}.`;
+  document.getElementById("decisionCosts").textContent=`Kosten-Trend ${s.costTrend>0?"+":""}${s.costTrend}%; CapEx ${euro(s.capex)}, OpEx ${euro(s.opex)}.`;
+  document.getElementById("decisionRec").textContent=s.status==="red"
+    ?"Frist- und Rechtslage sofort manuell prüfen. Parallel CRM-Wirtschaftlichkeit bewerten; keine automatische Verlängerung auslösen."
+    :s.costTrend>=20
+      ?"Verlängerung grundsätzlich prüfen, aber vor Entscheidung Kostenursachen und Vermieter-/Mieter-Verantwortung klären."
+      :"Vertrag und wirtschaftliche Entwicklung sprechen für eine vertiefte Verlängerungsprüfung.";
+  setTab("decision");
+}
+function demoAnalyse(){
+  analyseSite("AG0222");
+}
+function exportCSV(){
+  const header=["Standortnummer","Standort","Bundesland","Mietende","Kündigungsfrist","Option","Optionsfrist","Nettomiete","Nebenkosten","Index","Basisjahr","Indexprüfung","CapEx","OpEx","Kosten-Trend","Umsatz","Marge","Strategische Relevanz","Status"];
+  const rows=sites.map(s=>[s.nr,s.name,s.bundesland,s.end,s.notice,s.option,s.optionDeadline,s.rent,s.nk,s.index,s.indexBase,s.indexNext,s.capex,s.opex,s.costTrend,s.revenue,s.margin,s.strategic,s.status]);
+  const csv=[header,...rows].map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(";")).join("\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="ImmoSmart_Standorte_Demo.csv"; a.click(); URL.revokeObjectURL(a.href);
+}
+renderSites(); showSite("AG0222"); renderPriorities(); renderContractActions();
+</script>
+</body>
+</html>
